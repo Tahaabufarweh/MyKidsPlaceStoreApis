@@ -1,4 +1,5 @@
 ﻿
+using Repository.Interfaces;
 using Repository.Repositories;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,9 @@ namespace Repository.UnitOfWork
     public interface IRepositoryUnitOfWork : IDisposable
     {
          Lazy<IBrandRepository> Brand { get; set; }
+         Lazy<IRoleRepository> Roles { get; set; }
          Lazy<ICartItemRepository> CartItem { get; set; }
+         Lazy<IItemRepository> Item { get; set; }
          Lazy<ICategoryRepository> Category { get; set; }
          Lazy<IMasterCategoryRepository> MasterCategory { get; set; }
          Lazy<ISubCategoryRepository> SubCategory { get; set; }

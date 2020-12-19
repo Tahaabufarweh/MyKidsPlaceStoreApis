@@ -8,6 +8,7 @@ namespace Service.UnitOfWork
 {
     public interface IServiceUnitOfWork : IDisposable
     {
+        Lazy<IAuthService> Auth { get; set; }
         Lazy<IBrandService> Brand { get; set; }
         Lazy<ICartItemService> CartItem { get; set; }
         Lazy<ICategoryService> Category { get; set; }

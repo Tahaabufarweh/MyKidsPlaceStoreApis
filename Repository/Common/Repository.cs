@@ -26,9 +26,9 @@ namespace Repository.Repositories.Common
         }
 
         #region Get
-        public IEntity Get(long Id)
+        public IEntity Get(int Id)
         {
-            IEntity result = Context.Set<IEntity>().AsNoTracking().FirstOrDefault(entity => entity.Id == Id);
+            IEntity result = Context.Set<IEntity>().FirstOrDefault(entity => entity.Id == Id);
             return result;
         }
 
@@ -49,6 +49,14 @@ namespace Repository.Repositories.Common
             IEntity result = Context.Set<IEntity>().AsNoTracking().FirstOrDefault(where);
             return result;
           }
+        #endregion
+
+        #region Any
+        public bool Any(Expression<Func<IEntity, bool>> where)
+        {
+            bool result = Context.Set<IEntity>().Any(where);
+            return result;
+        }
         #endregion
 
         #region FirstOrDefault
@@ -72,10 +80,26 @@ namespace Repository.Repositories.Common
 
             foreach (Expression<Func<IEntity, object>> navigationProperty in navigationProperties)
             {
-                dbQuery = dbQuery.Include<IEntity, object>(navigationProperty);
+                dbQuery = dbQuery.Include(navigationProperty);
             }
 
             return dbQuery.Where(predicate).AsNoTracking();
+        }
+        #endregion
+
+        #region List
+        public List<IEntity> List(Expression<Func<IEntity, bool>> predicate, int PageSize, int PageNumber , params Expression<Func<IEntity, object>>[] navigationProperties)
+        {
+            IQueryable<IEntity> dbQuery = Context.Set<IEntity>();
+
+            foreach (Expression<Func<IEntity, object>> navigationProperty in navigationProperties)
+            {
+                dbQuery = dbQuery.Include(navigationProperty);
+            }
+
+            return dbQuery.Where(predicate)
+                .Skip(PageSize * (PageNumber - 1))
+                .Take(PageSize).ToList(); 
         }
         #endregion
 
@@ -119,11 +143,12 @@ namespace Repository.Repositories.Common
         #endregion
 
         #region Remove
-        public IEntity Remove(IEntity entity)
+        public bool Remove(int Id)
         {
+            IEntity entity = Get(Id);
             Context.Set<IEntity>().Remove(entity);
             SaveChanges();
-            return entity;
+            return true;
         }
         #endregion
 

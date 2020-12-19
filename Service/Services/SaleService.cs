@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public Sale Add(Sale entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.Sale.Value.Add(entity);
+            return entity;
+        }
+
+
+        public Sale Update(Sale entity)
+        {
+            _repositoryUnitOfWork.Sale.Value.Update(entity);
+            return entity;
+        }
+
+        public Sale Get(int Id)
+        {
+            Sale Sale = _repositoryUnitOfWork.Sale.Value.Get(Id);
+            return Sale;
+        }
+
+        public List<Sale> List(BaseSearch search)
+        {
+            List<Sale> Sales = _repositoryUnitOfWork.Sale.Value.List(x=> true, search.PageSize, search.PageNumber);
+            return Sales;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.Sale.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<Sale> AddRange(IEnumerable<Sale> entities)
@@ -27,17 +54,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Sale Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Sale> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Sale Remove(Sale entity)
+        public IEnumerable<Sale> UpdateRange(IEnumerable<Sale> entities)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +69,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Sale Update(Sale entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Sale> UpdateRange(IEnumerable<Sale> entities)
+        public IEnumerable<Sale> GetAll()
         {
             throw new NotImplementedException();
         }

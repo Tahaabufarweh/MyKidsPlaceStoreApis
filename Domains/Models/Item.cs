@@ -13,7 +13,7 @@ namespace Domains.Models
             UserOrder = new HashSet<UserOrder>();
         }
 
-        public int CategoryId { get; set; }
+        public int SubCategoryId { get; set; }
         public int BrandId { get; set; }
         public int Status { get; set; }
         public double Price { get; set; }
@@ -24,7 +24,7 @@ namespace Domains.Models
         public int? SetId { get; set; }
 
         public virtual Brand Brand { get; set; }
-        public virtual Category Category { get; set; }
+        public virtual SubCategory SubCategory { get; set; }
         public virtual Set Set { get; set; }
         public virtual ICollection<CartItem> CartItem { get; set; }
         public virtual ICollection<Sale> Sale { get; set; }

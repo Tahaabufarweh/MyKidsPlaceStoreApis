@@ -8,20 +8,15 @@ namespace Domains.Models
     {
         public Category()
         {
-            Item = new HashSet<Item>();
+            SubCategory = new HashSet<SubCategory>();
         }
 
+        public int Id { get; set; }
         public string CategoryName { get; set; }
         public int Status { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public long? CreatedBy { get; set; }
-        public DateTime? ModifiedDate { get; set; }
-        public long? ModifiedBy { get; set; }
-        public int SubCategoryId { get; set; }
+        public int MasterCategoryId { get; set; }
 
-        public virtual ApplicationUser CreatedByNavigation { get; set; }
-        public virtual ApplicationUser ModifiedByNavigation { get; set; }
-        public virtual SubCategory SubCategory { get; set; }
-        public virtual ICollection<Item> Item { get; set; }
+        public virtual MasterCategory MasterCategory { get; set; }
+        public virtual ICollection<SubCategory> SubCategory { get; set; }
     }
 }

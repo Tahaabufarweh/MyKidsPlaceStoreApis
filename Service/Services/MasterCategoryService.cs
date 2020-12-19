@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public MasterCategory Add(MasterCategory entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.MasterCategory.Value.Add(entity);
+            return entity;
+        }
+
+
+        public MasterCategory Update(MasterCategory entity)
+        {
+            _repositoryUnitOfWork.MasterCategory.Value.Update(entity);
+            return entity;
+        }
+
+        public MasterCategory Get(int Id)
+        {
+            MasterCategory MasterCategory = _repositoryUnitOfWork.MasterCategory.Value.Get(Id);
+            return MasterCategory;
+        }
+
+        public List<MasterCategory> List(BaseSearch search)
+        {
+            List<MasterCategory> MasterCategorys = _repositoryUnitOfWork.MasterCategory.Value.List(x => string.IsNullOrEmpty(search.Name) || x.CategoryName.Contains(search.Name), search.PageSize, search.PageNumber);
+            return MasterCategorys;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.MasterCategory.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<MasterCategory> AddRange(IEnumerable<MasterCategory> entities)
@@ -27,17 +54,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public MasterCategory Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<MasterCategory> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public MasterCategory Remove(MasterCategory entity)
+        public IEnumerable<MasterCategory> UpdateRange(IEnumerable<MasterCategory> entities)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +69,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public MasterCategory Update(MasterCategory entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<MasterCategory> UpdateRange(IEnumerable<MasterCategory> entities)
+        public IEnumerable<MasterCategory> GetAll()
         {
             throw new NotImplementedException();
         }

@@ -44,7 +44,7 @@ namespace Repository.Context
             if (!optionsBuilder.IsConfigured)
             {
               
-                optionsBuilder.UseSqlServer(appConfiguration.BudgetConnnectionString);
+                optionsBuilder.UseSqlServer(appConfiguration.ConnectionString);
             }
 
         }
@@ -107,6 +107,26 @@ namespace Repository.Context
             {
                 entity.Property(e => e.CategoryName)
                     .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.HasOne(d => d.MasterCategory)
+                    .WithMany(p => p.Category)
+                    .HasForeignKey(d => d.MasterCategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MasterCategory_Category");
+            });
+
+            modelBuilder.Entity<MasterCategory>(entity =>
+            {
+                entity.Property(e => e.CategoryName)
+                    .IsRequired()
+                    .HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<SubCategory>(entity =>
+            {
+                entity.Property(e => e.CategoryName)
+                    .IsRequired()
                     .HasMaxLength(500);
 
                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
@@ -114,20 +134,20 @@ namespace Repository.Context
                 entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.CreatedByNavigation)
-                    .WithMany(p => p.CategoryCreatedByNavigation)
+                    .WithMany(p => p.SubCategoryCreatedByNavigation)
                     .HasForeignKey(d => d.CreatedBy)
-                    .HasConstraintName("FK_Category_ApplicationUser1");
+                    .HasConstraintName("FK_SubCategory_ApplicationUser1");
 
                 entity.HasOne(d => d.ModifiedByNavigation)
-                    .WithMany(p => p.CategoryModifiedByNavigation)
+                    .WithMany(p => p.SubCategoryModifiedByNavigation)
                     .HasForeignKey(d => d.ModifiedBy)
-                    .HasConstraintName("FK_Category_ApplicationUser");
+                    .HasConstraintName("FK_SubCategory_ApplicationUser");
 
-                entity.HasOne(d => d.SubCategory)
-                    .WithMany(p => p.Category)
+                entity.HasOne(d => d.SubCategoryNavigation)
+                    .WithMany(p => p.SubCategory)
                     .HasForeignKey(d => d.SubCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Category_SubCategory");
+                    .HasConstraintName("FK_SubCategory_Category");
             });
 
             modelBuilder.Entity<Item>(entity =>
@@ -144,11 +164,11 @@ namespace Repository.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Item_Brand");
 
-                entity.HasOne(d => d.Category)
+                entity.HasOne(d => d.SubCategory)
                     .WithMany(p => p.Item)
-                    .HasForeignKey(d => d.CategoryId)
+                    .HasForeignKey(d => d.SubCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Item_Category");
+                    .HasConstraintName("FK_Item_SubCategory");
 
                 entity.HasOne(d => d.Set)
                     .WithMany(p => p.Item)
@@ -156,12 +176,8 @@ namespace Repository.Context
                     .HasConstraintName("FK_Item_Set");
             });
 
-            modelBuilder.Entity<MasterCategory>(entity =>
-            {
-                entity.Property(e => e.CategoryName)
-                    .IsRequired()
-                    .HasMaxLength(200);
-            });
+
+
 
             modelBuilder.Entity<RoleClaims>(entity =>
             {
@@ -196,18 +212,7 @@ namespace Repository.Context
                     .HasConstraintName("FK_Sale_Item");
             });
 
-            modelBuilder.Entity<SubCategory>(entity =>
-            {
-                entity.Property(e => e.SubCategoryName)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.HasOne(d => d.MasterCategory)
-                    .WithMany(p => p.SubCategory)
-                    .HasForeignKey(d => d.MasterCategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SubCategory_MasterCategory");
-            });
+            
 
             modelBuilder.Entity<UserCart>(entity =>
             {

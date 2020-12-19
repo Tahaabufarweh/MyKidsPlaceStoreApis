@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,8 @@ namespace Service.Services
         }
         public CartItem Add(CartItem entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.CartItem.Value.Add(entity);
+            return entity;
         }
 
         public IEnumerable<CartItem> AddRange(IEnumerable<CartItem> entities)
@@ -27,9 +29,10 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public CartItem Get(long Id)
+        public CartItem Get(int Id)
         {
-            throw new NotImplementedException();
+            CartItem cartItem = _repositoryUnitOfWork.CartItem.Value.Get(Id);
+            return cartItem;
         }
 
         public IEnumerable<CartItem> GetAll()
@@ -37,9 +40,16 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public CartItem Remove(CartItem entity)
+        public List<CartItem> List(BaseSearch search)
         {
-            throw new NotImplementedException();
+            List<CartItem> CartItems = _repositoryUnitOfWork.CartItem.Value.List(x=> true, search.PageSize, search.PageNumber);
+            return CartItems;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.CartItem.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<CartItem> RemoveRange(IEnumerable<CartItem> entities)
@@ -54,7 +64,8 @@ namespace Service.Services
 
         public CartItem Update(CartItem entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.CartItem.Value.Update(entity);
+            return entity;
         }
 
         public IEnumerable<CartItem> UpdateRange(IEnumerable<CartItem> entities)

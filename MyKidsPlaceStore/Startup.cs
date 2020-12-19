@@ -19,6 +19,8 @@ using MyKidsPlaceStore.AppMiddleware;
 using Domains.Models;
 using SamaDelivery.Api.Helpers;
 using Service.UnitOfWork;
+using Service.Interfaces;
+using Service.Services;
 
 namespace MyKidsPlaceStore
 {
@@ -38,13 +40,15 @@ namespace MyKidsPlaceStore
         {
             services.AddControllers().AddNewtonsoftJson(options =>
                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddDbContext<MyKidsStoreDbContext>(options =>
+           options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
+            services.AddHttpContextAccessor();
+            services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddScoped<IServiceUnitOfWork, ServiceUnitOfWork>();
+           
 
             services.AddCors();
-            services.AddDbContext<MyKidsStoreDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")),
-            ServiceLifetime.Transient
-            );
+           
             
             services.AddSwaggerGen(c =>
             {

@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public Set Add(Set entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.Set.Value.Add(entity);
+            return entity;
+        }
+
+
+        public Set Update(Set entity)
+        {
+            _repositoryUnitOfWork.Set.Value.Update(entity);
+            return entity;
+        }
+
+        public Set Get(int Id)
+        {
+            Set Set = _repositoryUnitOfWork.Set.Value.Get(Id);
+            return Set;
+        }
+
+        public List<Set> List(BaseSearch search)
+        {
+            List<Set> Sets = _repositoryUnitOfWork.Set.Value.List(x=> true, search.PageSize, search.PageNumber);
+            return Sets;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.Set.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<Set> AddRange(IEnumerable<Set> entities)
@@ -27,17 +54,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Set Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Set> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Set Remove(Set entity)
+        public IEnumerable<Set> UpdateRange(IEnumerable<Set> entities)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +69,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Set Update(Set entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Set> UpdateRange(IEnumerable<Set> entities)
+        public IEnumerable<Set> GetAll()
         {
             throw new NotImplementedException();
         }

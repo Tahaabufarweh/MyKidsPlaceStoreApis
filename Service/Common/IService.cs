@@ -4,17 +4,18 @@ using System.Text;
 
 namespace Service.Interfaces.Common
 {
-    public interface IService<Entity>
+    public interface IService<Entity, TEntity>
     {
         Entity Add(Entity entity);
         IEnumerable<Entity> AddRange(IEnumerable<Entity> entities);
         Entity Update(Entity entity);
         IEnumerable<Entity> UpdateRange(IEnumerable<Entity> entities);
-        Entity Remove(Entity entity);
+        bool Remove(int Id);
         IEnumerable<Entity> RemoveRange(IEnumerable<Entity> entities);
         IEnumerable<Entity> RemoveRangeByIDs(IEnumerable<long> IDs);
-        Entity Get(long Id);
+        Entity Get(int Id);
         IEnumerable<Entity> GetAll();
+        List<Entity> List(TEntity entity);
 
     }
 }

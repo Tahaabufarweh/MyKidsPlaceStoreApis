@@ -1,4 +1,5 @@
 ﻿using Repository.Context;
+using Repository.Interfaces;
 using Repository.Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Repository.UnitOfWork
         private MyKidsStoreDbContext _Context;
 
         public Lazy<IBrandRepository> Brand { get; set; }
+        public Lazy<IItemRepository> Item { get; set; }
+        public Lazy<IRoleRepository> Roles { get; set; }
         public Lazy<ICartItemRepository> CartItem{ get; set; }
         public Lazy<ICategoryRepository> Category { get; set; }
         public Lazy<IMasterCategoryRepository> MasterCategory { get; set; }
@@ -24,7 +27,9 @@ namespace Repository.UnitOfWork
         public RepositoryUnitOfWork(MyKidsStoreDbContext context)
         {
             _Context = context;
+            Item = new Lazy<IItemRepository>(() => new ItemsRepository(_Context));
             Brand = new Lazy<IBrandRepository>(() => new BrandRepository(_Context));
+            Roles = new Lazy<IRoleRepository>(() => new RoleRepository(_Context));
             CartItem = new Lazy<ICartItemRepository>(() => new CartItemRepository(_Context));
             Category = new Lazy<ICategoryRepository>(() => new CategoryRepository(_Context));
             MasterCategory = new Lazy<IMasterCategoryRepository>(() => new MasterCategoryRepository(_Context));

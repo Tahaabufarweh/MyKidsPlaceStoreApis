@@ -9,8 +9,8 @@ namespace Domains.Models
         public ApplicationUser()
         {
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
-            CategoryCreatedByNavigation = new HashSet<Category>();
-            CategoryModifiedByNavigation = new HashSet<Category>();
+            SubCategoryCreatedByNavigation = new HashSet<SubCategory>();
+            SubCategoryModifiedByNavigation = new HashSet<SubCategory>();
             UserCart = new HashSet<UserCart>();
             UserClaims = new HashSet<UserClaims>();
             UserLogins = new HashSet<UserLogins>();
@@ -51,8 +51,8 @@ namespace Domains.Models
         public bool? IsActive { get; set; }
 
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
-        public virtual ICollection<Category> CategoryCreatedByNavigation { get; set; }
-        public virtual ICollection<Category> CategoryModifiedByNavigation { get; set; }
+        public virtual ICollection<SubCategory> SubCategoryCreatedByNavigation { get; set; }
+        public virtual ICollection<SubCategory> SubCategoryModifiedByNavigation { get; set; }
         public virtual ICollection<UserCart> UserCart { get; set; }
         public virtual ICollection<UserClaims> UserClaims { get; set; }
         public virtual ICollection<UserLogins> UserLogins { get; set; }

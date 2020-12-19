@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public UserOrder Add(UserOrder entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.UserOrder.Value.Add(entity);
+            return entity;
+        }
+
+
+        public UserOrder Update(UserOrder entity)
+        {
+            _repositoryUnitOfWork.UserOrder.Value.Update(entity);
+            return entity;
+        }
+
+        public UserOrder Get(int Id)
+        {
+            UserOrder UserOrder = _repositoryUnitOfWork.UserOrder.Value.Get(Id);
+            return UserOrder;
+        }
+
+        public List<UserOrder> List(BaseSearch search)
+        {
+            List<UserOrder> UserOrders = _repositoryUnitOfWork.UserOrder.Value.List(x => true, search.PageSize, search.PageNumber);
+            return UserOrders;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.UserOrder.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<UserOrder> AddRange(IEnumerable<UserOrder> entities)
@@ -27,17 +54,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public UserOrder Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<UserOrder> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserOrder Remove(UserOrder entity)
+        public IEnumerable<UserOrder> UpdateRange(IEnumerable<UserOrder> entities)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +69,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public UserOrder Update(UserOrder entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<UserOrder> UpdateRange(IEnumerable<UserOrder> entities)
+        public IEnumerable<UserOrder> GetAll()
         {
             throw new NotImplementedException();
         }

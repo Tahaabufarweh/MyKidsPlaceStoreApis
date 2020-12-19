@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public UserCart Add(UserCart entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.UserCart.Value.Add(entity);
+            return entity;
+        }
+
+
+        public UserCart Update(UserCart entity)
+        {
+            _repositoryUnitOfWork.UserCart.Value.Update(entity);
+            return entity;
+        }
+
+        public UserCart Get(int Id)
+        {
+            UserCart UserCart = _repositoryUnitOfWork.UserCart.Value.Get(Id);
+            return UserCart;
+        }
+
+        public List<UserCart> List(BaseSearch search)
+        {
+            List<UserCart> UserCarts = _repositoryUnitOfWork.UserCart.Value.List(x => true, search.PageSize, search.PageNumber);
+            return UserCarts;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.UserCart.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<UserCart> AddRange(IEnumerable<UserCart> entities)
@@ -27,17 +54,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public UserCart Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<UserCart> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserCart Remove(UserCart entity)
+        public IEnumerable<UserCart> UpdateRange(IEnumerable<UserCart> entities)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +69,7 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public UserCart Update(UserCart entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<UserCart> UpdateRange(IEnumerable<UserCart> entities)
+        public IEnumerable<UserCart> GetAll()
         {
             throw new NotImplementedException();
         }

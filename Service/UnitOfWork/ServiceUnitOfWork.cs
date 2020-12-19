@@ -1,4 +1,7 @@
-﻿using Repository;
+﻿using Domains.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Repository;
 using Repository.Context;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -12,8 +15,10 @@ namespace Service.UnitOfWork
     public class ServiceUnitOfWork : IServiceUnitOfWork
     {
         private IRepositoryUnitOfWork _repositoryUnitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly LoggedInUserService _loggedInUserService;
 
-
+        public Lazy<IAuthService> Auth { get; set; }
         public Lazy<IBrandService> Brand { get; set; }
         public Lazy<ICartItemService> CartItem { get; set; }
         public Lazy<ICategoryService> Category { get; set; }
@@ -24,14 +29,19 @@ namespace Service.UnitOfWork
         public Lazy<ISubCategoryService> SubCategory { get; set; }
         public Lazy<IUserCartService> UserCart { get; set; }
         public Lazy<IUserOrderService> UserOrder { get; set; }
-        
 
 
-        public ServiceUnitOfWork(MyKidsStoreDbContext context)
+
+        public ServiceUnitOfWork(
+           MyKidsStoreDbContext context,
+           UserManager<ApplicationUser> userManager,
+           IHttpContextAccessor httpContextAccessor,
+           SignInManager<ApplicationUser> signInManager
+           )
         {
+            _loggedInUserService = new LoggedInUserService(httpContextAccessor);
             _repositoryUnitOfWork = new RepositoryUnitOfWork(context);
-
-
+            Auth = new Lazy<IAuthService>(() => new AuthService(userManager, _repositoryUnitOfWork, signInManager, _loggedInUserService));
             Brand = new Lazy<IBrandService>(() => new BrandService(_repositoryUnitOfWork));
             CartItem = new Lazy<ICartItemService>(() => new CartItemService(_repositoryUnitOfWork));
             Category = new Lazy<ICategoryService>(() => new CategoryService(_repositoryUnitOfWork));
@@ -45,6 +55,7 @@ namespace Service.UnitOfWork
   
         }
 
+        
         public void Dispose() {}
     }
 }

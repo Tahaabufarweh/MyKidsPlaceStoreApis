@@ -1,4 +1,5 @@
 ﻿using Domains.Models;
+using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
 using Service.Interfaces;
@@ -19,7 +20,33 @@ namespace Service.Services
         }
         public Brand Add(Brand entity)
         {
-            throw new NotImplementedException();
+            _repositoryUnitOfWork.Brand.Value.Add(entity);
+            return entity;
+        }
+
+
+        public Brand Update(Brand entity)
+        {
+            _repositoryUnitOfWork.Brand.Value.Update(entity);
+            return entity;
+        }
+
+        public Brand Get(int Id)
+        {
+            Brand brand = _repositoryUnitOfWork.Brand.Value.Get(Id);
+            return brand;
+        }
+
+        public List<Brand> List(BaseSearch search)
+        {
+            List<Brand> brands = _repositoryUnitOfWork.Brand.Value.List(x => string.IsNullOrEmpty(search.Name) || x.BrandName.Contains(search.Name), search.PageSize, search.PageNumber);
+            return brands;
+        }
+
+        public bool Remove(int Id)
+        {
+            _repositoryUnitOfWork.Brand.Value.Remove(Id);
+            return true;
         }
 
         public IEnumerable<Brand> AddRange(IEnumerable<Brand> entities)
@@ -27,20 +54,15 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Brand Get(long Id)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         public IEnumerable<Brand> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Brand Remove(Brand entity)
-        {
-            throw new NotImplementedException();
-        }
+        
+
+        
 
         public IEnumerable<Brand> RemoveRange(IEnumerable<Brand> entities)
         {
@@ -52,10 +74,6 @@ namespace Service.Services
             throw new NotImplementedException();
         }
 
-        public Brand Update(Brand entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public IEnumerable<Brand> UpdateRange(IEnumerable<Brand> entities)
         {

@@ -8,12 +8,13 @@ namespace Domains.Models
     {
         public MasterCategory()
         {
-            SubCategory = new HashSet<SubCategory>();
+            Category = new HashSet<Category>();
         }
 
+        public int Id { get; set; }
         public string CategoryName { get; set; }
         public int Status { get; set; }
 
-        public virtual ICollection<SubCategory> SubCategory { get; set; }
+        public virtual ICollection<Category> Category { get; set; }
     }
 }
