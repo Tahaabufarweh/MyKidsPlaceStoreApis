@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domains.DTO;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -15,7 +16,7 @@ namespace Service.Interfaces.Common
         IEnumerable<Entity> RemoveRangeByIDs(IEnumerable<long> IDs);
         Entity Get(int Id);
         IEnumerable<Entity> GetAll();
-        List<Entity> List(TEntity entity);
+        BaseListResponse<Entity> List(TEntity entity);
 
     }
 }

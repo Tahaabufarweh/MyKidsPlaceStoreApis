@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Domains.DTO;
 using Domains.Models;
 using Domains.SearchModels;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,7 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
-                List<Sale> Sale = _serviceUnitOfWork.Sale.Value.List(baseSearch);
+                BaseListResponse<Sale> Sale = _serviceUnitOfWork.Sale.Value.List(baseSearch);
                 return Ok(Sale);
             }
             catch (ValidationException e)
@@ -62,6 +63,7 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
+                
                 _serviceUnitOfWork.Sale.Value.Add(Sale);
                 return Ok(Sale);
             }

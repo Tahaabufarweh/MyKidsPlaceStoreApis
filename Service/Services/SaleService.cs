@@ -1,4 +1,6 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Enums;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -20,6 +22,8 @@ namespace Service.Services
         }
         public Sale Add(Sale entity)
         {
+            entity.CreatedDate = DateTime.Now;
+            entity.Status = (int) GlobalStatusEnum.Active;
             _repositoryUnitOfWork.Sale.Value.Add(entity);
             return entity;
         }
@@ -37,9 +41,9 @@ namespace Service.Services
             return Sale;
         }
 
-        public List<Sale> List(BaseSearch search)
+        public BaseListResponse<Sale> List(BaseSearch search)
         {
-            List<Sale> Sales = _repositoryUnitOfWork.Sale.Value.List(x=> true, search.PageSize, search.PageNumber);
+            BaseListResponse<Sale> Sales = _repositoryUnitOfWork.Sale.Value.List(x=> true, search.PageSize, search.PageNumber);
             return Sales;
         }
 
@@ -71,7 +75,8 @@ namespace Service.Services
 
         public IEnumerable<Sale> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.Sale.Value.GetAll();
+
         }
     }
 }

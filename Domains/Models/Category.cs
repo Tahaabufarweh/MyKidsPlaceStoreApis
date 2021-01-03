@@ -11,12 +11,10 @@ namespace Domains.Models
             SubCategory = new HashSet<SubCategory>();
         }
 
-        public int Id { get; set; }
         public string CategoryName { get; set; }
-        public int Status { get; set; }
-        public int MasterCategoryId { get; set; }
+        public string ImagePath { get; set; }
+        public string CategoryNameAr { get; set; }
 
-        public virtual MasterCategory MasterCategory { get; set; }
         public virtual ICollection<SubCategory> SubCategory { get; set; }
     }
 }

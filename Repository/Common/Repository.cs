@@ -1,4 +1,5 @@
 ﻿using Domains.Common;
+using Domains.DTO;
 using Domains.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -88,18 +89,23 @@ namespace Repository.Repositories.Common
         #endregion
 
         #region List
-        public List<IEntity> List(Expression<Func<IEntity, bool>> predicate, int PageSize, int PageNumber , params Expression<Func<IEntity, object>>[] navigationProperties)
+        public BaseListResponse<IEntity> List(Expression<Func<IEntity, bool>> predicate, int PageSize, int PageNumber, params Expression<Func<IEntity, object>>[] navigationProperties)
         {
             IQueryable<IEntity> dbQuery = Context.Set<IEntity>();
-
+            int totalCount = dbQuery.Count();
             foreach (Expression<Func<IEntity, object>> navigationProperty in navigationProperties)
             {
                 dbQuery = dbQuery.Include(navigationProperty);
             }
 
-            return dbQuery.Where(predicate)
+
+            return new BaseListResponse<IEntity>
+            {
+                TotalCount = totalCount,
+                entities = dbQuery.Where(predicate)
                 .Skip(PageSize * (PageNumber - 1))
-                .Take(PageSize).ToList(); 
+                .Take(PageSize).ToList()
+            };
         }
         #endregion
 

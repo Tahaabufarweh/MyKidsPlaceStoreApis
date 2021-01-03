@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Domains.DTO;
 using Domains.Models;
 using Domains.SearchModels;
 using Microsoft.AspNetCore.Http;
@@ -13,20 +14,39 @@ namespace MyKidsPlaceStore.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class MasterCategoryController : ControllerBase
+    public class SizeController : ControllerBase
     {
         private readonly IServiceUnitOfWork _serviceUnitOfWork;
-        public MasterCategoryController(IServiceUnitOfWork serviceUnitOfWork)
+        public SizeController(IServiceUnitOfWork serviceUnitOfWork)
         {
             _serviceUnitOfWork = serviceUnitOfWork;
         }
-        [HttpGet]
+
+        [HttpGet("{Id}")]
         public IActionResult GetById(int Id)
         {
             try
             {
-                MasterCategory MasterCategory = _serviceUnitOfWork.MasterCategory.Value.Get(Id);
-                return Ok(MasterCategory);
+                Size size = _serviceUnitOfWork.Size.Value.Get(Id);
+                return Ok(size);
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetAllItems()
+        {
+            try
+            {
+                IEnumerable<Size> sizes = _serviceUnitOfWork.Size.Value.GetAll();
+                return Ok(sizes);
             }
             catch (ValidationException e)
             {
@@ -43,8 +63,8 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
-                List<MasterCategory> MasterCategory = _serviceUnitOfWork.MasterCategory.Value.List(baseSearch);
-                return Ok(MasterCategory);
+                BaseListResponse<Size> Size = _serviceUnitOfWork.Size.Value.List(baseSearch);
+                return Ok(Size);
             }
             catch (ValidationException e)
             {
@@ -58,12 +78,12 @@ namespace MyKidsPlaceStore.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] MasterCategory MasterCategory)
+        public IActionResult Create([FromBody] Size size)
         {
             try
             {
-                _serviceUnitOfWork.MasterCategory.Value.Add(MasterCategory);
-                return Ok(MasterCategory);
+                _serviceUnitOfWork.Size.Value.Add(size);
+                return Ok(size);
             }
             catch (ValidationException e)
             {
@@ -77,12 +97,12 @@ namespace MyKidsPlaceStore.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update([FromBody] MasterCategory MasterCategory)
+        public IActionResult Update([FromBody] Size size)
         {
             try
             {
-                _serviceUnitOfWork.MasterCategory.Value.Update(MasterCategory);
-                return Ok(MasterCategory);
+                _serviceUnitOfWork.Size.Value.Update(size);
+                return Ok(size);
             }
             catch (ValidationException e)
             {
@@ -95,12 +115,12 @@ namespace MyKidsPlaceStore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{Id}")]
         public IActionResult Delete(int Id)
         {
             try
             {
-                _serviceUnitOfWork.MasterCategory.Value.Remove(Id);
+                _serviceUnitOfWork.Size.Value.Remove(Id);
                 return Ok(true);
             }
             catch (ValidationException e)
@@ -113,6 +133,5 @@ namespace MyKidsPlaceStore.Controllers
                 throw;
             }
         }
-
     }
 }

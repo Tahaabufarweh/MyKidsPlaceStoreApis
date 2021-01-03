@@ -1,4 +1,6 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Enums;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -20,6 +22,8 @@ namespace Service.Services
         }
         public CartItem Add(CartItem entity)
         {
+            entity.Status = (int)GlobalStatusEnum.Active;
+            entity.CreatedDate = DateTime.Now;
             _repositoryUnitOfWork.CartItem.Value.Add(entity);
             return entity;
         }
@@ -37,12 +41,12 @@ namespace Service.Services
 
         public IEnumerable<CartItem> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.CartItem.Value.GetAll();
         }
 
-        public List<CartItem> List(BaseSearch search)
+        public BaseListResponse<CartItem> List(BaseSearch search)
         {
-            List<CartItem> CartItems = _repositoryUnitOfWork.CartItem.Value.List(x=> true, search.PageSize, search.PageNumber);
+            BaseListResponse<CartItem> CartItems = _repositoryUnitOfWork.CartItem.Value.List(x=> true, search.PageSize, search.PageNumber);
             return CartItems;
         }
 

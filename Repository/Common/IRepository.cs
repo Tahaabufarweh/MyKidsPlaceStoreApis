@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Domains.DTO;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -18,7 +19,7 @@ namespace Repository.Interfaces.Common
         IEnumerable<IEntity> UpdateRange(IEnumerable<IEntity> Entities);
         bool Remove(int Id);
         IEnumerable<IEntity> RemoveRange(IEnumerable<IEntity> entities);
-        List<IEntity> List(Expression<Func<IEntity, bool>> predicate, int PageSize, int PageNumber, params Expression<Func<IEntity, object>>[] navigationProperties);
+        BaseListResponse<IEntity> List(Expression<Func<IEntity, bool>> predicate, int PageSize, int PageNumber, params Expression<Func<IEntity, object>>[] navigationProperties);
         IEnumerable<IEntity> Find(Expression<Func<IEntity, bool>> where, params Expression<Func<IEntity, object>>[] navigationProperties);
         IEntity FirstOrDefault(Expression<Func<IEntity, bool>> where, params Expression<Func<IEntity, object>>[] navigationProperties);
         IEntity FirstOrDefault(Expression<Func<IEntity, bool>> where);

@@ -1,10 +1,13 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 using Repository.Context;
 using Repository.Interfaces;
+using Repository.Interfaces.Common;
 using Repository.Repositories.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -52,12 +55,15 @@ namespace Repository.Repositories
 
         public Roles FirstOrDefault(Expression<Func<Roles, bool>> where)
         {
-            throw new NotImplementedException();
+            Roles result = _context.Roles.FirstOrDefault(where);
+            return result;
         }
 
         public bool Any(Expression<Func<Roles, bool>> where)
         {
-            throw new NotImplementedException();
+            bool result = _context.Roles.Any(where);
+            return result;
+
         }
 
         public Roles Get(long Id)
@@ -111,6 +117,11 @@ namespace Repository.Repositories
         }
 
         public List<Roles> List(Expression<Func<Roles, bool>> predicate, int PageSize, int PageNumber, params Expression<Func<Roles, object>>[] navigationProperties)
+        {
+            throw new NotImplementedException();
+        }
+
+        BaseListResponse<Roles> IRepository<Roles>.List(Expression<Func<Roles, bool>> predicate, int PageSize, int PageNumber, params Expression<Func<Roles, object>>[] navigationProperties)
         {
             throw new NotImplementedException();
         }

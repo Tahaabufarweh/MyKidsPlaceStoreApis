@@ -9,32 +9,13 @@ namespace Domains.Models
         public ApplicationUser()
         {
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
-            SubCategoryCreatedByNavigation = new HashSet<SubCategory>();
-            SubCategoryModifiedByNavigation = new HashSet<SubCategory>();
+ 
             UserCart = new HashSet<UserCart>();
             UserClaims = new HashSet<UserClaims>();
             UserLogins = new HashSet<UserLogins>();
-            UserOrderCreatedByNavigation = new HashSet<UserOrder>();
-            UserOrderModifiedByNavigation = new HashSet<UserOrder>();
-            UserOrderUser = new HashSet<UserOrder>();
             UserRoles = new HashSet<UserRoles>();
         }
 
-        public long Id { get; set; }
-        public string UserName { get; set; }
-        public string NormalizedUserName { get; set; }
-        public string Email { get; set; }
-        public string NormalizedEmail { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public string PasswordHash { get; set; }
-        public string SecurityStamp { get; set; }
-        public string ConcurrencyStamp { get; set; }
-        public string PhoneNumber { get; set; }
-        public bool PhoneNumberConfirmed { get; set; }
-        public bool TwoFactorEnabled { get; set; }
-        public DateTimeOffset? LockoutEnd { get; set; }
-        public bool LockoutEnabled { get; set; }
-        public int AccessFailedCount { get; set; }
         public string MobileNumber { get; set; }
         public Guid UserGuid { get; set; }
         public string FullName { get; set; }
@@ -49,16 +30,12 @@ namespace Domains.Models
         public long? CreatedBy { get; set; }
         public long? UpdatedBy { get; set; }
         public bool? IsActive { get; set; }
-
+        public string Address { get; set; }
         public virtual ICollection<AspNetUserTokens> AspNetUserTokens { get; set; }
-        public virtual ICollection<SubCategory> SubCategoryCreatedByNavigation { get; set; }
-        public virtual ICollection<SubCategory> SubCategoryModifiedByNavigation { get; set; }
+    
         public virtual ICollection<UserCart> UserCart { get; set; }
         public virtual ICollection<UserClaims> UserClaims { get; set; }
         public virtual ICollection<UserLogins> UserLogins { get; set; }
-        public virtual ICollection<UserOrder> UserOrderCreatedByNavigation { get; set; }
-        public virtual ICollection<UserOrder> UserOrderModifiedByNavigation { get; set; }
-        public virtual ICollection<UserOrder> UserOrderUser { get; set; }
         public virtual ICollection<UserRoles> UserRoles { get; set; }
     }
 }

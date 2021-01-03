@@ -8,8 +8,8 @@ namespace Domains.DTO
     public class RegisterDTO
     {
         public string Email { get; set; }
-        [Required]
-        public string Username { get; set; }
+        public string Address { get; set; }
+       
 
         [Required]
         [StringLength(100, ErrorMessage = "PASSWORD_MIN_LENGTH", MinimumLength = 6)]

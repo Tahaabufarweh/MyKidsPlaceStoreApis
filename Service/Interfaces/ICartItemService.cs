@@ -10,5 +10,6 @@ namespace Service.Interfaces
 {
     public interface ICartItemService : IService<CartItem, BaseSearch>
     {
+
     }
 }

@@ -8,7 +8,8 @@ using System.Text;
 
 namespace Service.Interfaces
 {
-    public interface IUserOrderService : IService<UserOrder, BaseSearch>
+    public interface IColorService : IService<Colour, BaseSearch>
     {
     }
 }
+

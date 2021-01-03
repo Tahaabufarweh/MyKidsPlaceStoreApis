@@ -1,5 +1,6 @@
 ﻿using Domains.Common;
 using Domains.DTO;
+using Domains.Enums;
 using Domains.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -66,17 +67,8 @@ namespace Service.Services
         public async Task<ApplicationUser> Create(RegisterDTO model)
         {
             // var userId = _principalService.GetUserId();
-            bool existUsername = _userManager.Users.FirstOrDefault(x => x.UserName == model.Username) == null ? false : true;
-            bool existEmail = _userManager.Users.FirstOrDefault(x => x.Email == model.Email) == null ? false : true;
             bool existMobileNumber = _userManager.Users.FirstOrDefault(x => x.MobileNumber == model.MobileNumber) == null ? false : true;
-            if (existEmail)
-            {
-                throw new ValidationException("Email address is used");
-            }
-            if (existUsername)
-            {
-                throw new ValidationException("Username is used");
-            }
+           
             if (existMobileNumber)
             {
                 throw new ValidationException("Mobile number is used");
@@ -90,15 +82,16 @@ namespace Service.Services
                 FullName = model.FullName,
                 IsActive = true,
                 MobileNumber = model.MobileNumber,
-                UserName = model.Username,
-                
+                UserName = model.MobileNumber,
+                Address = model.Address
             };
 
-            CreateRoleIfNotExist("User");
-            var result = await _userManager.CreateAsync(user, model.Password);
-
+            
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                CreateRoleIfNotExist("User", user.Id);
+                CreateUserCart(user.Id);
                 return user;
             }
             throw new ValidationException("Error");
@@ -128,8 +121,9 @@ namespace Service.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.MobilePhone, user.MobileNumber),
+                new Claim(ClaimTypes.StreetAddress, user.Address)
             };
             foreach (var item in roles)
             {
@@ -141,36 +135,51 @@ namespace Service.Services
             return claims;
         }
 
-        private void CreateRoleIfNotExist(string name)
+        private void CreateRoleIfNotExist(string roleName, long userId)
         {
-            if (!_repositoryUnitOfWork.Roles.Value.Any(r => r.Name == name))
+            Roles role = _repositoryUnitOfWork.Roles.Value.FirstOrDefault(r => r.Name == roleName);
+            if (role == null)
             {
-                var role = new Roles
+                Roles roleObj = new Roles
                 {
-                    Name = name
+                    Id = 0,
+                    Name = roleName
                 };
 
-                _repositoryUnitOfWork.Roles.Value.Add(role);
+                role = _repositoryUnitOfWork.Roles.Value.Add(roleObj);
             }
+            UserRoles userRole = new UserRoles
+            {
+                RoleId = role.Id,
+                UserId = userId
+            };
+            userRole = _repositoryUnitOfWork.UserRole.Value.Add(userRole);
         }
 
+        private void CreateUserCart(long userId)
+        {
+            UserCart cart = new UserCart
+            {
+                UserId = userId,
+                Status = (int)GlobalStatusEnum.Active
+            };
+            _repositoryUnitOfWork.UserCart.Value.Add(cart);
+
+        }
+
+        
         //change this please
         private TokenResponseDTO BuildUserLoginObject(ApplicationUser user, IList<Claim> claims, IList<string> roles)
         {
             TokenResponseDTO response = new TokenResponseDTO {
-            AccessToken = WriteToken(claims),
-            UserId = user.Id.ToString(),
-            PhoneNumber = user.PhoneNumber,
-            FullName = user.FullName,
-            Email = user.Email,
-            Roles = roles,
-         };
+             AccessToken = WriteToken(claims)
+            };
            
             return response;
         }
         private string WriteToken(IList<Claim> claims)
         {
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfiguration.Issuer));
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfiguration.JWTKey));
 
             JwtSecurityToken jwtToken = new JwtSecurityToken(
                     issuer: _appConfiguration.Issuer,

@@ -1,4 +1,5 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -6,6 +7,7 @@ using Service.Interfaces;
 using Service.Interfaces.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Service.Services
@@ -21,6 +23,13 @@ namespace Service.Services
 
         public Item Add(Item entity)
         {
+            if (entity.IsSet)
+            {
+                if(entity.Set == null)
+                {
+                    throw new ValidationException("Set defintion not found");
+                }
+            }
             _repositoryUnitOfWork.Item.Value.Add(entity);
             return entity;
         }
@@ -38,17 +47,18 @@ namespace Service.Services
             return Item;
         }
 
-        public List<Item> List(BaseSearch search)
+        public BaseListResponse<Item> List(BaseSearch search)
         {
-            List<Item> Items = _repositoryUnitOfWork.Item.Value.List(x => string.IsNullOrEmpty(search.Name) || x.Description.Contains(search.Name), search.PageSize, search.PageNumber);
+            BaseListResponse<Item> Items = _repositoryUnitOfWork.Item.Value.List(x => string.IsNullOrEmpty(search.Name) || x.Description.Contains(search.Name), search.PageSize, search.PageNumber);
             return Items;
         }
 
-        public List<Item> GetItemsBySubCategoryId(int Id, BaseSearch search)
+        public BaseListResponse<Item> GetItemsBySubCategoryId(int Id, BaseSearch search)
         {
-            List<Item> Items = _repositoryUnitOfWork.Item.Value.List(x => x.SubCategoryId == Id && string.IsNullOrEmpty(search.Name) || x.Description.Contains(search.Name), search.PageSize, search.PageNumber);
+            BaseListResponse<Item> Items = _repositoryUnitOfWork.Item.Value.List(x => x.SubCategoryId == Id && string.IsNullOrEmpty(search.Name) || x.Description.Contains(search.Name), search.PageSize, search.PageNumber);
             return Items;
         }
+
         public bool Remove(int Id)
         {
             _repositoryUnitOfWork.Item.Value.Remove(Id);
@@ -77,7 +87,8 @@ namespace Service.Services
 
         public IEnumerable<Item> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.Item.Value.GetAll();
+
         }
     }
 }

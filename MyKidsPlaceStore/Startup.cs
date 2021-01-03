@@ -21,6 +21,7 @@ using SamaDelivery.Api.Helpers;
 using Service.UnitOfWork;
 using Service.Interfaces;
 using Service.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyKidsPlaceStore
 {
@@ -38,18 +39,19 @@ namespace MyKidsPlaceStore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddControllers().AddNewtonsoftJson(options =>
                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddCors();
             services.AddDbContext<MyKidsStoreDbContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
             services.AddHttpContextAccessor();
             services.AddScoped<ILoggedInUserService, LoggedInUserService>();
             services.AddScoped<IServiceUnitOfWork, ServiceUnitOfWork>();
            
 
             services.AddCors();
-           
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Kids Place Store Api", Version = "v1" });
@@ -79,14 +81,15 @@ namespace MyKidsPlaceStore
                             .AddEntityFrameworkStores<MyKidsStoreDbContext>()
                                     .AddDefaultTokenProviders()
                                     .AddSignInManager();
+
             services.Configure<IdentityOptions>(options =>
             {
+                options.User.RequireUniqueEmail = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
-                options.User.RequireUniqueEmail = true;
             });
 
 
@@ -110,11 +113,15 @@ namespace MyKidsPlaceStore
             }
 
             app.UseHttpsRedirection();
-
+           
             app.UseRouting();
-
+            app.UseStaticFiles();
+            
             app.UseAuthorization();
-
+            app.UseCors(
+              options => options.WithOrigins("*").AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+            );
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

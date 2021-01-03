@@ -1,4 +1,5 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -37,9 +38,9 @@ namespace Service.Services
             return UserCart;
         }
 
-        public List<UserCart> List(BaseSearch search)
+        public BaseListResponse<UserCart> List(BaseSearch search)
         {
-            List<UserCart> UserCarts = _repositoryUnitOfWork.UserCart.Value.List(x => true, search.PageSize, search.PageNumber);
+            BaseListResponse<UserCart> UserCarts = _repositoryUnitOfWork.UserCart.Value.List(x => true, search.PageSize, search.PageNumber);
             return UserCarts;
         }
 
@@ -71,7 +72,8 @@ namespace Service.Services
 
         public IEnumerable<UserCart> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.UserCart.Value.GetAll();
+
         }
     }
 }

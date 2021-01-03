@@ -1,4 +1,6 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Enums;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -20,6 +22,7 @@ namespace Service.Services
         }
         public Category Add(Category entity)
         {
+            entity.Status = (int) GlobalStatusEnum.Active;
             _repositoryUnitOfWork.Category.Value.Add(entity);
             return entity;
         }
@@ -27,6 +30,7 @@ namespace Service.Services
 
         public Category Update(Category entity)
         {
+            
             _repositoryUnitOfWork.Category.Value.Update(entity);
             return entity;
         }
@@ -37,17 +41,17 @@ namespace Service.Services
             return Category;
         }
 
-        public List<Category> List(BaseSearch search)
+        public BaseListResponse<Category> List(BaseSearch search)
         {
-            List<Category> Categorys = _repositoryUnitOfWork.Category.Value.List(x => string.IsNullOrEmpty(search.Name) || x.CategoryName.Contains(search.Name), search.PageSize, search.PageNumber);
+            BaseListResponse<Category> Categorys = _repositoryUnitOfWork.Category.Value.List(x => string.IsNullOrEmpty(search.Name) || (x.CategoryName.Contains(search.Name) || x.CategoryNameAr.Contains(search.Name)), search.PageSize, search.PageNumber);
             return Categorys;
         }
 
-        public List<Category> GetCategoryByMasterCategoryId(int Id, BaseSearch search)
-        {
-            List<Category> Categorys = _repositoryUnitOfWork.Category.Value.List(x => x.MasterCategoryId == Id && string.IsNullOrEmpty(search.Name) || x.CategoryName.Contains(search.Name), search.PageSize, search.PageNumber);
-            return Categorys;
-        }
+        //public List<Category> GetCategoryByMasterCategoryId(int Id, BaseSearch search)
+        //{
+        //    List<Category> Categorys = _repositoryUnitOfWork.Category.Value.List(x => x.MasterCategoryId == Id && string.IsNullOrEmpty(search.Name) || x.CategoryName.Contains(search.Name), search.PageSize, search.PageNumber);
+        //    return Categorys;
+        //}
 
         public bool Remove(int Id)
         {
@@ -77,7 +81,7 @@ namespace Service.Services
 
         public IEnumerable<Category> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.Category.Value.GetAll();
         }
 
         

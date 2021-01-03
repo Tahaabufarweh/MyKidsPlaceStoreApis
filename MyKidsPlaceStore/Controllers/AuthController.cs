@@ -61,6 +61,7 @@ namespace MyKidsPlaceStore.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> UpdateRegId(string regId)
         {
             try

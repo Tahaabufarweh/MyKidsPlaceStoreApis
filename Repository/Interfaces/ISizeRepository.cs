@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Repository.Repositories
+namespace Repository.Interfaces
 {
-    public interface IUserOrderRepository : IRepository<UserOrder>
+    public interface ISizeRepository : IRepository<Size>
     {
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Domains.DTO;
 using Domains.Models;
 using Domains.SearchModels;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,8 @@ namespace MyKidsPlaceStore.Controllers
         {
             _serviceUnitOfWork = serviceUnitOfWork;
         }
-        [HttpGet]
+
+        [HttpGet("{Id}")]
         public IActionResult GetById(int Id)
         {
             try
@@ -43,7 +45,7 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
-                List<Item> Item = _serviceUnitOfWork.Item.Value.List(baseSearch);
+                BaseListResponse<Item> Item = _serviceUnitOfWork.Item.Value.List(baseSearch);
                 return Ok(Item);
             }
             catch (ValidationException e)
@@ -95,7 +97,7 @@ namespace MyKidsPlaceStore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{Id}")]
         public IActionResult Delete(int Id)
         {
             try

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Domains.DTO;
 using Domains.Models;
 using Domains.SearchModels;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,8 @@ namespace MyKidsPlaceStore.Controllers
         {
             _serviceUnitOfWork = serviceUnitOfWork;
         }
-        [HttpGet]
+
+        [HttpGet("{Id}")]
         public IActionResult GetById(int Id)
         {
             try
@@ -43,7 +45,26 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
-                List<SubCategory> SubCategory = _serviceUnitOfWork.SubCategory.Value.List(baseSearch);
+                BaseListResponse<SubCategory> SubCategory = _serviceUnitOfWork.SubCategory.Value.List(baseSearch);
+                return Ok(SubCategory);
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost("{categoryId}")]
+        public IActionResult GetSubCategoryByCategoryId([FromRoute] int categoryId, [FromBody] BaseSearch baseSearch)
+        {
+            try
+            {
+                BaseListResponse<SubCategory> SubCategory = _serviceUnitOfWork.SubCategory.Value.GetSubCategoryByCategoryId(categoryId, baseSearch);
                 return Ok(SubCategory);
             }
             catch (ValidationException e)
@@ -62,6 +83,7 @@ namespace MyKidsPlaceStore.Controllers
         {
             try
             {
+
                 _serviceUnitOfWork.SubCategory.Value.Add(SubCategory);
                 return Ok(SubCategory);
             }
@@ -69,10 +91,10 @@ namespace MyKidsPlaceStore.Controllers
             {
                 return BadRequest(e);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                throw e;
             }
         }
 
@@ -88,14 +110,14 @@ namespace MyKidsPlaceStore.Controllers
             {
                 return BadRequest(e);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                throw e;
             }
         }
 
-        [HttpGet]
+        [HttpGet("{Id}")]
         public IActionResult Delete(int Id)
         {
             try

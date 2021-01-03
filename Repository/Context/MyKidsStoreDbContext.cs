@@ -28,15 +28,20 @@ namespace Repository.Context
         public virtual DbSet<UserRoles> UsersRoles { get; set; }
         public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public virtual DbSet<ItemSizes> ItemSizes { get; set; }
+        public virtual DbSet<Orders> Orders { get; set; }
+        public virtual DbSet<Colour> Colour { get; set; }
+        public virtual DbSet<ItemColors> ItemColors { get; set; }
 
         public virtual DbSet<Brand> Brand { get; set; }
         public virtual DbSet<CartItem> CartItem { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Item> Item { get; set; }
+        public virtual DbSet<ItemImages> ItemImages { get; set; }
         public virtual DbSet<Sale> Sale { get; set; }
         public virtual DbSet<Set> Set { get; set; }
         public virtual DbSet<UserCart> UserCart { get; set; }
-        public virtual DbSet<UserOrder> UserOrder { get; set; }
+        public virtual DbSet<SubCategory> SubCategory { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -60,6 +65,8 @@ namespace Repository.Context
                     .HasName("UserNameIndex")
                     .IsUnique()
                     .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+                entity.Property(e => e.Address).HasMaxLength(500);
 
                 entity.Property(e => e.Email).HasMaxLength(256);
 
@@ -101,6 +108,11 @@ namespace Repository.Context
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CartItem_Item");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.CartItem)
+                    .HasForeignKey(d => d.OrderId)
+                    .HasConstraintName("FK_CartItem_Orders");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -109,54 +121,23 @@ namespace Repository.Context
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.HasOne(d => d.MasterCategory)
-                    .WithMany(p => p.Category)
-                    .HasForeignKey(d => d.MasterCategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_MasterCategory_Category");
-            });
-
-            modelBuilder.Entity<MasterCategory>(entity =>
-            {
-                entity.Property(e => e.CategoryName)
+                entity.Property(e => e.CategoryNameAr)
                     .IsRequired()
                     .HasMaxLength(200);
+
+                entity.Property(e => e.ImagePath).HasMaxLength(3000);
             });
 
-            modelBuilder.Entity<SubCategory>(entity =>
+            modelBuilder.Entity<Colour>(entity =>
             {
-                entity.Property(e => e.CategoryName)
-                    .IsRequired()
-                    .HasMaxLength(500);
-
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.CreatedByNavigation)
-                    .WithMany(p => p.SubCategoryCreatedByNavigation)
-                    .HasForeignKey(d => d.CreatedBy)
-                    .HasConstraintName("FK_SubCategory_ApplicationUser1");
-
-                entity.HasOne(d => d.ModifiedByNavigation)
-                    .WithMany(p => p.SubCategoryModifiedByNavigation)
-                    .HasForeignKey(d => d.ModifiedBy)
-                    .HasConstraintName("FK_SubCategory_ApplicationUser");
-
-                entity.HasOne(d => d.SubCategoryNavigation)
-                    .WithMany(p => p.SubCategory)
-                    .HasForeignKey(d => d.SubCategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SubCategory_Category");
+                entity.Property(e => e.Color).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Item>(entity =>
             {
                 entity.Property(e => e.Description).HasMaxLength(3000);
 
-                entity.Property(e => e.SizesAvailable)
-                    .IsRequired()
-                    .HasMaxLength(1000);
+                entity.Property(e => e.DescriptionAr).HasMaxLength(3000);
 
                 entity.HasOne(d => d.Brand)
                     .WithMany(p => p.Item)
@@ -164,20 +145,77 @@ namespace Repository.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Item_Brand");
 
+                entity.HasOne(d => d.Set)
+                    .WithMany(p => p.Item)
+                    .HasForeignKey(d => d.SetId)
+                    .HasConstraintName("FK_Item_Set");
+
                 entity.HasOne(d => d.SubCategory)
                     .WithMany(p => p.Item)
                     .HasForeignKey(d => d.SubCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Item_SubCategory");
-
-                entity.HasOne(d => d.Set)
-                    .WithMany(p => p.Item)
-                    .HasForeignKey(d => d.SetId)
-                    .HasConstraintName("FK_Item_Set");
             });
 
+            modelBuilder.Entity<ItemColors>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.HasOne(d => d.Color)
+                    .WithMany(p => p.ItemColors)
+                    .HasForeignKey(d => d.ColorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemColors_Colour");
 
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.ItemColors)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemColors_Item");
+            });
+
+            modelBuilder.Entity<ItemImages>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.ImagePath)
+                    .IsRequired()
+                    .HasMaxLength(3000);
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.ItemImages)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemImages_Item");
+            });
+
+            modelBuilder.Entity<ItemSizes>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Status).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.ItemSizes)
+                    .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemSizes_Item");
+
+                entity.HasOne(d => d.Size)
+                    .WithMany(p => p.ItemSizes)
+                    .HasForeignKey(d => d.SizeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ItemSizes_Size");
+            });
+
+            modelBuilder.Entity<Orders>(entity =>
+            {
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedBy).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            });
 
             modelBuilder.Entity<RoleClaims>(entity =>
             {
@@ -209,17 +247,40 @@ namespace Repository.Context
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.Sale)
                     .HasForeignKey(d => d.ItemId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Sale_Item");
             });
 
-            
+            modelBuilder.Entity<Size>(entity =>
+            {
+                entity.Property(e => e.Size1)
+                    .HasColumnName("Size")
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<SubCategory>(entity =>
+            {
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.NameAr)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.SubCategory)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SubCategory_Category");
+            });
 
             modelBuilder.Entity<UserCart>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Status).ValueGeneratedOnAdd();
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserCart)
                     .HasForeignKey(d => d.UserId)
@@ -245,35 +306,6 @@ namespace Repository.Context
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserLogins)
                     .HasForeignKey(d => d.UserId);
-            });
-
-            modelBuilder.Entity<UserOrder>(entity =>
-            {
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.CreatedByNavigation)
-                    .WithMany(p => p.UserOrderCreatedByNavigation)
-                    .HasForeignKey(d => d.CreatedBy)
-                    .HasConstraintName("FK_UserOrder_ApplicationUser1");
-
-                entity.HasOne(d => d.Item)
-                    .WithMany(p => p.UserOrder)
-                    .HasForeignKey(d => d.ItemId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Item_UserOrder");
-
-                entity.HasOne(d => d.ModifiedByNavigation)
-                    .WithMany(p => p.UserOrderModifiedByNavigation)
-                    .HasForeignKey(d => d.ModifiedBy)
-                    .HasConstraintName("FK_UserOrder_ApplicationUser");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserOrderUser)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ApplicationUser_UserOrder");
             });
 
             modelBuilder.Entity<UserRoles>(entity =>

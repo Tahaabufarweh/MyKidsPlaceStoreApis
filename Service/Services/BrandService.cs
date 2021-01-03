@@ -1,4 +1,5 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -37,9 +38,9 @@ namespace Service.Services
             return brand;
         }
 
-        public List<Brand> List(BaseSearch search)
+        public BaseListResponse<Brand> List(BaseSearch search)
         {
-            List<Brand> brands = _repositoryUnitOfWork.Brand.Value.List(x => string.IsNullOrEmpty(search.Name) || x.BrandName.Contains(search.Name), search.PageSize, search.PageNumber);
+            BaseListResponse<Brand> brands = _repositoryUnitOfWork.Brand.Value.List(x => string.IsNullOrEmpty(search.Name) || x.BrandName.Contains(search.Name), search.PageSize, search.PageNumber);
             return brands;
         }
 
@@ -57,7 +58,7 @@ namespace Service.Services
        
         public IEnumerable<Brand> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.Brand.Value.GetAll();
         }
 
         
@@ -79,5 +80,7 @@ namespace Service.Services
         {
             throw new NotImplementedException();
         }
+
+    
     }
 }

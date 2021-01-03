@@ -10,6 +10,6 @@ namespace Service.Interfaces
 {
     public interface ICategoryService : IService<Category, BaseSearch>
     {
-        List<Category> GetCategoryByMasterCategoryId(int Id, BaseSearch search);
+        //List<Category> GetCategoryByMasterCategoryId(int Id, BaseSearch search);
     }
 }

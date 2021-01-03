@@ -1,4 +1,5 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Service.Interfaces.Common;
@@ -10,6 +11,6 @@ namespace Service.Interfaces
 {
     public interface ISubCategoryService : IService<SubCategory, BaseSearch>
     {
-        //List<Item> GetSubCategoryByCategoryId(int Id, BaseSearch search);
+        BaseListResponse<SubCategory> GetSubCategoryByCategoryId(int Id, BaseSearch search);
     }
 }

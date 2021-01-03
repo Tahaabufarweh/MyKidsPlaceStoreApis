@@ -13,12 +13,15 @@ namespace Service.UnitOfWork
         Lazy<ICartItemService> CartItem { get; set; }
         Lazy<ICategoryService> Category { get; set; }
         Lazy<IItemService> Item { get; set; }
-        Lazy<IMasterCategoryService> MasterCategory { get; set; }
+        Lazy<IColorService> Color { get; set; }
+        Lazy<ISizeService> Size { get; set; }
+        Lazy<IItemColorService> ItemColor { get; set; }
+        Lazy<IItemSizeService> ItemSize { get; set; }
+        Lazy<IOrderService> Order { get; set; }
         Lazy<ISaleService> Sale { get; set; }
         Lazy<ISetService> Set { get; set; }
         Lazy<ISubCategoryService> SubCategory { get; set; }
         Lazy<IUserCartService> UserCart { get; set; }
-        Lazy<IUserOrderService> UserOrder { get; set; }
 
 
     }

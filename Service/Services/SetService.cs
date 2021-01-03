@@ -1,4 +1,5 @@
-﻿using Domains.Models;
+﻿using Domains.DTO;
+using Domains.Models;
 using Domains.SearchModels;
 using Repository.Interfaces.Common;
 using Repository.UnitOfWork;
@@ -37,9 +38,9 @@ namespace Service.Services
             return Set;
         }
 
-        public List<Set> List(BaseSearch search)
+        public BaseListResponse<Set> List(BaseSearch search)
         {
-            List<Set> Sets = _repositoryUnitOfWork.Set.Value.List(x=> true, search.PageSize, search.PageNumber);
+            BaseListResponse<Set> Sets = _repositoryUnitOfWork.Set.Value.List(x=> true, search.PageSize, search.PageNumber);
             return Sets;
         }
 
@@ -71,7 +72,7 @@ namespace Service.Services
 
         public IEnumerable<Set> GetAll()
         {
-            throw new NotImplementedException();
+            return _repositoryUnitOfWork.Set.Value.GetAll();
         }
     }
 }

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Domains.DTO;
 using Domains.Models;
 using Domains.SearchModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using MyKidsPlaceStore.Helpers;
 using Service.UnitOfWork;
 
 namespace MyKidsPlaceStore.Controllers
@@ -16,11 +21,16 @@ namespace MyKidsPlaceStore.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IServiceUnitOfWork _serviceUnitOfWork;
-        public CategoryController(IServiceUnitOfWork serviceUnitOfWork)
+        
+        private FileUploader fileUploaderHelper;
+        public CategoryController(IServiceUnitOfWork serviceUnitOfWork, IWebHostEnvironment webHostEnvironmen)
         {
             _serviceUnitOfWork = serviceUnitOfWork;
+            fileUploaderHelper = new FileUploader(webHostEnvironmen);
+
         }
-        [HttpGet]
+
+        [HttpGet("{Id}")]
         public IActionResult GetById(int Id)
         {
             try
@@ -38,12 +48,32 @@ namespace MyKidsPlaceStore.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetAllItems()
+        {
+            try
+            {
+                IEnumerable<Category> categories = _serviceUnitOfWork.Category.Value.GetAll();
+                return Ok(categories);
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        
         [HttpPost]
         public IActionResult GetList([FromBody] BaseSearch baseSearch)
         {
             try
             {
-                List<Category> Category = _serviceUnitOfWork.Category.Value.List(baseSearch);
+                BaseListResponse<Category> Category = _serviceUnitOfWork.Category.Value.List(baseSearch);
                 return Ok(Category);
             }
             catch (ValidationException e)
@@ -58,12 +88,22 @@ namespace MyKidsPlaceStore.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetList(int Id, [FromBody] BaseSearch baseSearch)
+        public async Task<IActionResult> Create([FromForm] string categoryName, [FromForm]  string categoryNameAr,[FromForm] int status,[FromForm]  IFormFile file)
         {
+
             try
             {
-                List<Category> Category = _serviceUnitOfWork.Category.Value.List(baseSearch);
-                return Ok(Category);
+                string fileName = await fileUploaderHelper.PostFile(file);
+                Category category = new Category {
+                 Id = 0,
+                 CategoryName = categoryName,
+                 CategoryNameAr = categoryNameAr,
+                 Status = status,
+                 ImagePath = fileName,
+                };
+
+                _serviceUnitOfWork.Category.Value.Add(category);
+                return Ok(category);
             }
             catch (ValidationException e)
             {
@@ -75,14 +115,26 @@ namespace MyKidsPlaceStore.Controllers
                 throw;
             }
         }
+
 
         [HttpPost]
-        public IActionResult Create([FromBody] Category Category)
+        public async Task<IActionResult> Update([FromForm] int Id, [FromForm]  string categoryNameAr, [FromForm] string categoryName, [FromForm] int status, [FromForm]  IFormFile file)
         {
+
             try
             {
-                _serviceUnitOfWork.Category.Value.Add(Category);
-                return Ok(Category);
+               
+                Category category = _serviceUnitOfWork.Category.Value.Get(Id);
+                bool isDeleted = fileUploaderHelper.DeleteFile(file.FileName);
+                string fileName = await fileUploaderHelper.PostFile(file);
+
+                category.CategoryName = categoryName;
+                category.CategoryNameAr = categoryNameAr;
+                category.Status = status;
+                category.ImagePath = fileName;
+
+                _serviceUnitOfWork.Category.Value.Update(category);
+                return Ok(category);
             }
             catch (ValidationException e)
             {
@@ -95,26 +147,8 @@ namespace MyKidsPlaceStore.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult Update([FromBody] Category Category)
-        {
-            try
-            {
-                _serviceUnitOfWork.Category.Value.Update(Category);
-                return Ok(Category);
-            }
-            catch (ValidationException e)
-            {
-                return BadRequest(e);
-            }
-            catch (Exception)
-            {
 
-                throw;
-            }
-        }
-
-        [HttpGet]
+        [HttpGet("{Id}")]
         public IActionResult Delete(int Id)
         {
             try

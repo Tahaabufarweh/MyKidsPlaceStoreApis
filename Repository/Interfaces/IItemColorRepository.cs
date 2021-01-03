@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Repository.Repositories
+namespace Repository.Interfaces
 {
-    public interface IMasterCategoryRepository : IRepository<MasterCategory>
+    public interface IItemColorRepository : IRepository<ItemColors>
     {
     }
+    
 }

@@ -32,5 +32,16 @@
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\AppImages\" />
+  </ItemGroup>
+  <ItemGroup>
+    <MsDeploySkipRules Include="CustomSkipFolder">
+      <ObjectName>dirPath</ObjectName>
+      <AbsolutePath>wwwroot\\AppImages</AbsolutePath>
+      
+    </MsDeploySkipRules>
+  </ItemGroup>
 
 </Project>
